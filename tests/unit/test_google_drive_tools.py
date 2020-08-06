@@ -35,7 +35,7 @@ def test_list_domain_folders():
         assert isinstance(folder, dict)
 
         kind = folder['kind']
-        assert kind == 'drive#file'
+        assert kind == 'drive#drive'
 
         folder_id = folder['id']
         assert isinstance(folder_id, str)
