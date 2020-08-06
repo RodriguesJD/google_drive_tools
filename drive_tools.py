@@ -110,16 +110,13 @@ def list_domain_folders() -> list:
 
     while getting_files:
         if not page_token:
-            response = drive_service().files().list(q="mimeType = 'application/vnd.google-apps.folder'",
-                                                    fields="*",
-                                                    spaces='drive',
-                                                    corpora='domain').execute()
+            response = drive_service().drives().list(useDomainAdminAccess=True,
+                                                     fields="*",
+                                                     ).execute()
         else:
-            response = drive_service().files().list(q="mimeType = 'application/vnd.google-apps.folder'",
-                                                    fields="*",
-                                                    spaces='drive',
-                                                    corpora='domain',
-                                                    pageToken=page_token).execute()
+            response = drive_service().drives().list(useDomainAdminAccess=True,
+                                                     fields="*",
+                                                     pageToken=page_token).execute()
 
         key_list = list(response.keys())
         if "nextPageToken" not in key_list:
@@ -127,11 +124,12 @@ def list_domain_folders() -> list:
         else:
             page_token = response["nextPageToken"]
 
-        folders = response['files']  # Drive api refers to files and folders as files.
+        folders = response['drives']
         for folder in folders:
             my_folders.append(folder)
 
     return my_folders
+
 
 
 def find_folder_by_name(folder_name: str) -> Union[bool, dict]:
