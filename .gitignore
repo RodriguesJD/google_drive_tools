@@ -1,0 +1,7 @@
+# Created by .ignore support plugin (hsz.mobi)
+venv
+.idea
+credentials.json
+*__pycache__*
+token.pickle
+playground.py
