@@ -43,8 +43,6 @@ def test_list_domain_folders():
         folder_name = folder['name']
         assert isinstance(folder_name, str)
 
-        folder_type = folder['mimeType']
-        assert folder_type == 'application/vnd.google-apps.folder'
 
 
 def test_find_folder_by_name():
