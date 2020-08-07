@@ -275,6 +275,46 @@ def find_domain_folder_by_name_by_searching_files(folder_name: str) -> Union[boo
     return folder_data
 
 
+def find_domain_folder_by_name_by_searching_drives(folder_name: str) -> Union[bool, dict]:
+    """
+    Search through all the domain folders that the Oauth user has access to. If the folder_name is found it returns a
+    dict of data about the folder.
+
+    Args:
+        folder_name: Name of the Google Drive folder.
+
+    Returns:
+        bool, dict: If folder_name is found it returns a dict. If the folder name is not found it returns False.
+
+    """
+    page_token = None
+    getting_files = True
+    folder_data = False
+
+    while getting_files:
+        if not page_token:
+            response = no_cache_discovery_service().drives().list(useDomainAdminAccess=True,
+                                                                  fields="*").execute()
+        else:
+            response = no_cache_discovery_service().drives().list(useDomainAdminAccess=True,
+                                                                  fields="*",
+                                                                  pageToken=page_token).execute()
+
+        key_list = list(response.keys())
+        if "nextPageToken" not in key_list:
+            getting_files = False
+        else:
+            page_token = response["nextPageToken"]
+
+        folders = response['files']  # Drive api refers to files and folders as files.
+        for folder in folders:
+            if folder_name == folder["name"]:
+                folder_data = folder
+                getting_files = False
+
+    return folder_data
+
+
 def find_domain_folder_by_id_by_searching_files(folder_id: str) -> Union[bool, dict]:
     """
     Search through all the domain folders that the Oauth user has access to. If the folder_id is found it returns a

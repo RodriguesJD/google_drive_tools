@@ -44,6 +44,25 @@ def test_list_domain_folders_by_searching_files():
         assert isinstance(folder_name, str)
 
 
+def test_list_domain_folders_by_searching_drives():
+    list_domain_folders = drive_tools.list_domain_folders_by_searching_drives()
+    assert isinstance(list_domain_folders, list)
+
+    for folder in list_domain_folders:
+        assert isinstance(folder, dict)
+
+        kind = folder['kind']
+        assert kind == 'drive#drive'
+
+        folder_id = folder['id']
+        assert isinstance(folder_id, str)
+
+        folder_name = folder['name']
+        assert isinstance(folder_name, str)
+
+
+
+
 def test_find_my_folder_by_name_by_searching_files():
     file_that_exists = os.environ["G_DRIVE_TEST_FOLDER"]
     folder = drive_tools.find_my_folder_by_name_by_searching_files(file_that_exists)
@@ -81,7 +100,7 @@ def test_find_domain_folder_by_name_by_searching_files():
     assert folder_type == 'application/vnd.google-apps.folder'
 
 
-def find_domain_folder_by_id_by_searching_files():
+def test_find_domain_folder_by_id_by_searching_files():
     file_id_that_exists = os.environ["G_DRIVE_TEST_FOLDER_ID"]
     folder = drive_tools.find_domain_folder_by_id_by_searching_files(file_id_that_exists)
     assert isinstance(folder, dict)
