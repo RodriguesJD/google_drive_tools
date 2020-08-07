@@ -66,6 +66,11 @@ def drive_service() -> object:
     return g_drive_service
 
 
+def no_cache_discovery_service():
+    service = build('drive', 'v3', credentials=google_creds(), cache_discovery=False)
+    return service
+
+
 def list_my_folders_by_searching_files() -> list:
     """
     Creates a list of all the folders that api Oauth user owns.
@@ -110,9 +115,6 @@ def list_domain_folders_by_searching_files() -> list:
         list: List of domain shared folders. Each folder returns a dict of data.
 
     """
-    # TODO dump from cache each loop if cache issues persists
-    # TODO trying to silence cach error for this
-    no_cahch_discovery_service = build('drive', 'v3', credentials=google_creds(), cache_discovery=False)
 
     page_token = None
     getting_files = True
@@ -120,14 +122,14 @@ def list_domain_folders_by_searching_files() -> list:
 
     while getting_files:
         if not page_token:
-            response = no_cahch_discovery_service.files().list(q="mimeType = 'application/vnd.google-apps.folder'",
-                                                    supportsAllDrives=True,
-                                                    includeItemsFromAllDrives=True,
-                                                    corpora='allDrives',
-                                                    fields="*",
-                                                    ).execute()
+            response = no_cache_discovery_service().files().list(q="mimeType = 'application/vnd.google-apps.folder'",
+                                                                 supportsAllDrives=True,
+                                                                 includeItemsFromAllDrives=True,
+                                                                 corpora='allDrives',
+                                                                 fields="*",
+                                                                 ).execute()
         else:
-            response = no_cahch_discovery_service.files().list(q="mimeType = 'application/vnd.google-apps.folder'",
+            response = no_cache_discovery_service().files().list(q="mimeType = 'application/vnd.google-apps.folder'",
                                                     supportsAllDrives=True,
                                                     includeItemsFromAllDrives=True,
                                                     corpora='allDrives',
@@ -206,14 +208,17 @@ def find_domain_folder_by_name_by_searching_files(folder_name: str) -> Union[boo
     while getting_files:
         if not page_token:
             # TODO Change this to all drives like list_domain_folders()
-            response = drive_service().files().list(q="mimeType = 'application/vnd.google-apps.folder'",
-                                                    corpora='domain',
-                                                    spaces='drive').execute()
+            response = no_cache_discovery_service().files().list(q="mimeType = 'application/vnd.google-apps.folder'",
+                                                                 supportsAllDrives=True,
+                                                                 includeItemsFromAllDrives=True,
+                                                                 corpora='allDrives',
+                                                                 fields="*",).execute()
         else:
-            response = drive_service().files().list(q="mimeType = 'application/vnd.google-apps.folder'",
-                                                    corpora='domain',
-                                                    spaces='drive',
-                                                    pageToken=page_token).execute()
+            response = no_cache_discovery_service().files().list(q="mimeType = 'application/vnd.google-apps.folder'",
+                                                                 supportsAllDrives=True,
+                                                                 includeItemsFromAllDrives=True,
+                                                                 corpora='allDrives',
+                                                                 fields="*",).execute()
 
         key_list = list(response.keys())
         if "nextPageToken" not in key_list:
@@ -248,8 +253,6 @@ def find_domain_folder_by_id(folder_id: str) -> Union[bool, dict]:
 
     while getting_files:
         if not page_token:
-            # TODO Change this to all drives like list_domain_folders()
-
             response = drive_service().files().list(q="mimeType = 'application/vnd.google-apps.folder'",
                                                     corpora='domain',
                                                     spaces='drive').execute()
