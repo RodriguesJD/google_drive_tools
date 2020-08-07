@@ -113,9 +113,6 @@ def test_find_domain_folder_by_name_by_searching_drives():
     folder_name = folder['name']
     assert isinstance(folder_name, str)
 
-    folder_type = folder['mimeType']
-    assert folder_type == 'application/vnd.google-apps.folder'
-
 
 def test_find_domain_folder_by_id_by_searching_files():
     file_id_that_exists = os.environ["G_DRIVE_TEST_FOLDER_ID"]
