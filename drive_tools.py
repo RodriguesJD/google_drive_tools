@@ -306,7 +306,7 @@ def find_domain_folder_by_name_by_searching_drives(folder_name: str) -> Union[bo
         else:
             page_token = response["nextPageToken"]
 
-        folders = response['files']  # Drive api refers to files and folders as files.
+        folders = response['drives']  # Drive api refers to files and folders as files.
         for folder in folders:
             if folder_name == folder["name"]:
                 folder_data = folder
@@ -366,7 +366,7 @@ def find_file_by_name(file_name: str) -> Union[bool, dict]:
         file_name: Name of the Google Drive file.
 
     Returns:
-        bool, dict: If filde_name is found it returns a dict. If the filde name is not found it returns False.
+        bool, dict: If file_name is found it returns a dict. If the filde name is not found it returns False.
 
     """
     page_token = None
