@@ -212,13 +212,14 @@ def find_domain_folder_by_name_by_searching_files(folder_name: str) -> Union[boo
                                                                  supportsAllDrives=True,
                                                                  includeItemsFromAllDrives=True,
                                                                  corpora='allDrives',
-                                                                 fields="*",).execute()
+                                                                 fields="*").execute()
         else:
             response = no_cache_discovery_service().files().list(q="mimeType = 'application/vnd.google-apps.folder'",
                                                                  supportsAllDrives=True,
                                                                  includeItemsFromAllDrives=True,
                                                                  corpora='allDrives',
-                                                                 fields="*",).execute()
+                                                                 fields="*",
+                                                                 pageToken=page_token).execute()
 
         key_list = list(response.keys())
         if "nextPageToken" not in key_list:
