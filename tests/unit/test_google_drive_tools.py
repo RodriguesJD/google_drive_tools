@@ -7,8 +7,8 @@ def test_dir_service():
     assert str(type(drive_tools.drive_service())) == "<class 'googleapiclient.discovery.Resource'>"
 
 
-def test_list_my_folders():
-    list_of_folders = drive_tools.list_my_folders()
+def test_list_my_folders_by_searching_files():
+    list_of_folders = drive_tools.list_my_folders_by_searching_files()
     assert isinstance(list_of_folders, list)
 
     for folder in list_of_folders:

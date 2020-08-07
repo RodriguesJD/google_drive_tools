@@ -65,7 +65,7 @@ def drive_service() -> object:
     return g_drive_service
 
 
-def list_my_folders() -> list:
+def list_my_folders_by_searching_files() -> list:
     """
     Creates a list of all the folders that api Oauth user has access to.
 
