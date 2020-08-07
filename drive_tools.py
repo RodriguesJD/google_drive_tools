@@ -130,11 +130,12 @@ def list_domain_folders_by_searching_files() -> list:
                                                                  ).execute()
         else:
             response = no_cache_discovery_service().files().list(q="mimeType = 'application/vnd.google-apps.folder'",
-                                                    supportsAllDrives=True,
-                                                    includeItemsFromAllDrives=True,
-                                                    corpora='allDrives',
-                                                    fields="*",
-                                                    pageToken=page_token).execute()
+                                                                 supportsAllDrives=True,
+                                                                 includeItemsFromAllDrives=True,
+                                                                 corpora='allDrives',
+                                                                 fields="*",
+                                                                 pageToken=page_token
+                                                                 ).execute()
 
         key_list = list(response.keys())
         if "nextPageToken" not in key_list:
@@ -143,6 +144,44 @@ def list_domain_folders_by_searching_files() -> list:
             page_token = response["nextPageToken"]
 
         folders = response['files']
+        for folder in folders:
+            domain_folders.append(folder)
+
+    return domain_folders
+
+
+def list_domain_folders_by_searching_drives():
+    """
+    Creates a list of all the domain shared folders that api Oauth user has access to.
+
+    Returns:
+        list: List of domain shared folders. Each folder returns a dict of data.
+
+    """
+
+    page_token = None
+    getting_files = True
+    domain_folders = []  # all the domain shared folders i have access to.
+
+    while getting_files:
+        if not page_token:
+            # TODO test with and with out fields
+            response = no_cache_discovery_service().drives().list(useDomainAdminAccess=True,
+                                                                  fields="*",
+                                                                  ).execute()
+        else:
+            response = no_cache_discovery_service().drives().list(useDomainAdminAccess=True,
+                                                                  fields="*",
+                                                                  pageToken=page_token
+                                                                  ).execute()
+
+        key_list = list(response.keys())
+        if "nextPageToken" not in key_list:
+            getting_files = False
+        else:
+            page_token = response["nextPageToken"]
+
+        folders = response['drives']
         for folder in folders:
             domain_folders.append(folder)
 
