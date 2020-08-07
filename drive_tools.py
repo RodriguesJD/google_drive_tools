@@ -13,6 +13,8 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from apiclient import errors
 
+# TODO change all none domain to my_
+# TODO search for folders as files and seperate functions for folders as drives
 
 def google_creds():
     """
@@ -49,6 +51,7 @@ def google_creds():
 
     return creds
 
+
 def drive_service() -> object:
     """
     This function negotiates access to Google Drive.
@@ -77,9 +80,11 @@ def list_my_folders() -> list:
     while getting_files:
         if not page_token:
             response = drive_service().files().list(q="mimeType = 'application/vnd.google-apps.folder'",
+                                                    fields="*",
                                                     spaces='drive').execute()
         else:
             response = drive_service().files().list(q="mimeType = 'application/vnd.google-apps.folder'",
+                                                    fields="*",
                                                     spaces='drive',
                                                     pageToken=page_token).execute()
 
@@ -106,17 +111,21 @@ def list_domain_folders() -> list:
     """
     page_token = None
     getting_files = True
-    my_folders = []  # all the domain shared folders i have access to.
+    domain_folders = []  # all the domain shared folders i have access to.
 
     while getting_files:
         if not page_token:
-            response = drive_service().drives().list(useDomainAdminAccess=True,
-                                                     fields="*",
-                                                     ).execute()
+            response = drive_service().files().list(supportsAllDrives=True,
+                                                    includeItemsFromAllDrives=True,
+                                                    corpora='allDrives',
+                                                    fields="*",
+                                                    ).execute()
         else:
-            response = drive_service().drives().list(useDomainAdminAccess=True,
-                                                     fields="*",
-                                                     pageToken=page_token).execute()
+            response = drive_service().files().list(supportsAllDrives=True,
+                                                    includeItemsFromAllDrives=True,
+                                                    corpora='allDrives',
+                                                    fields="*",
+                                                    pageToken=page_token).execute()
 
         key_list = list(response.keys())
         if "nextPageToken" not in key_list:
@@ -124,15 +133,14 @@ def list_domain_folders() -> list:
         else:
             page_token = response["nextPageToken"]
 
-        folders = response['drives']
+        folders = response['files']
         for folder in folders:
-            my_folders.append(folder)
+            domain_folders.append(folder)
 
-    return my_folders
+    return domain_folders
 
 
-
-def find_folder_by_name(folder_name: str) -> Union[bool, dict]:
+def find_my_folder_by_name(folder_name: str) -> Union[bool, dict]:
     """
     Search through all the folders that the Oauth user has access to. If the folder_name is found it returns a dict of
     data about the folder.
@@ -151,9 +159,10 @@ def find_folder_by_name(folder_name: str) -> Union[bool, dict]:
     while getting_files:
         if not page_token:
             response = drive_service().files().list(q="mimeType = 'application/vnd.google-apps.folder'",
-                                                    spaces='drive').execute()
+                                                    fields="*").execute()
         else:
-            response = drive_service().files().list(q="mimeType = 'application/vnd.google-apps.folder'", spaces='drive',
+            response = drive_service().files().list(q="mimeType = 'application/vnd.google-apps.folder'",
+                                                    fields="*",
                                                     pageToken=page_token).execute()
 
         key_list = list(response.keys())
@@ -189,6 +198,7 @@ def find_domain_folder_by_name(folder_name: str) -> Union[bool, dict]:
 
     while getting_files:
         if not page_token:
+            # TODO Change this to all drives like list_domain_folders()
             response = drive_service().files().list(q="mimeType = 'application/vnd.google-apps.folder'",
                                                     corpora='domain',
                                                     spaces='drive').execute()
@@ -207,6 +217,50 @@ def find_domain_folder_by_name(folder_name: str) -> Union[bool, dict]:
         folders = response['files']  # Drive api refers to files and folders as files.
         for folder in folders:
             if folder_name == folder["name"]:
+                folder_data = folder
+                getting_files = False
+
+    return folder_data
+
+
+def find_domain_folder_by_id(folder_id: str) -> Union[bool, dict]:
+    """
+    Search through all the domain folders that the Oauth user has access to. If the folder_id is found it returns a
+    dict of data about the folder.
+
+    Args:
+        folder_id: Google Drive folder id.
+
+    Returns:
+        bool, dict: If folder_id is found it returns a dict. If the folder id is not found it returns False.
+
+    """
+    page_token = None
+    getting_files = True
+    folder_data = False
+
+    while getting_files:
+        if not page_token:
+            # TODO Change this to all drives like list_domain_folders()
+
+            response = drive_service().files().list(q="mimeType = 'application/vnd.google-apps.folder'",
+                                                    corpora='domain',
+                                                    spaces='drive').execute()
+        else:
+            response = drive_service().files().list(q="mimeType = 'application/vnd.google-apps.folder'",
+                                                    corpora='domain',
+                                                    spaces='drive',
+                                                    pageToken=page_token).execute()
+
+        key_list = list(response.keys())
+        if "nextPageToken" not in key_list:
+            getting_files = False
+        else:
+            page_token = response["nextPageToken"]
+
+        folders = response['files']  # Drive api refers to files and folders as files.
+        for folder in folders:
+            if folder_id == folder["id"]:
                 folder_data = folder
                 getting_files = False
 
