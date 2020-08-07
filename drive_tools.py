@@ -236,7 +236,7 @@ def find_domain_folder_by_name_by_searching_files(folder_name: str) -> Union[boo
     return folder_data
 
 
-def find_domain_folder_by_id(folder_id: str) -> Union[bool, dict]:
+def find_domain_folder_by_id_by_searching_files(folder_id: str) -> Union[bool, dict]:
     """
     Search through all the domain folders that the Oauth user has access to. If the folder_id is found it returns a
     dict of data about the folder.
