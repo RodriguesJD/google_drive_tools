@@ -68,7 +68,7 @@ def drive_service() -> object:
 
 def list_my_folders_by_searching_files() -> list:
     """
-    Creates a list of all the folders that api Oauth user has access to.
+    Creates a list of all the folders that api Oauth user owns.
 
     Returns:
         list: List of folders. Each folder returns a dict of data.
