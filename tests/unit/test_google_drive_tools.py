@@ -151,6 +151,25 @@ def test_get_domain_folder_by_id_by_searching_files():
     assert folder_type == 'application/vnd.google-apps.folder'
 
 
+def test_get_domain_folder_by_id_by_searching_drive():
+    # TODO i don't own the domain folder so it is subject to change
+    file_id_that_exists = os.environ["G_DRIVE_DOMAIN_TEST_DRIVE_ID"]
+    folder = drive_tools.get_domain_folder_by_id_by_searching_files(file_id_that_exists)
+    assert isinstance(folder, dict)
+
+    kind = folder['kind']
+    assert kind == 'drive#file'
+
+    folder_id = folder['id']
+    assert isinstance(folder_id, str)
+
+    folder_name = folder['name']
+    assert isinstance(folder_name, str)
+
+    folder_type = folder['mimeType']
+    assert folder_type == 'application/vnd.google-apps.folder'
+
+
 def test_find_file_by_name():
     file_name = "Don't delete me i use this for testing"
     find_file = drive_tools.find_file_by_name(file_name)

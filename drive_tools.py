@@ -364,6 +364,13 @@ def get_domain_folder_by_id_by_searching_files(folder_id):
     return get_folder
 
 
+def get_domain_folder_by_id_by_searching_drive(drive_id):
+    get_folder = drive_service().files().get(driveId=drive_id,
+                                             fields='*',
+                                             useDomainAdminAccess=True).execute()
+    return get_folder
+
+
 def find_file_by_name(file_name: str) -> Union[bool, dict]:
     """
     Search through all the files that the Oauth user has access to. If the file_name is found it returns a dict of
