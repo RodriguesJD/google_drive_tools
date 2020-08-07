@@ -27,8 +27,8 @@ def test_list_my_folders_by_searching_files():
         assert folder_type == 'application/vnd.google-apps.folder'
 
 
-def test_list_domain_folders():
-    list_domain_folders = drive_tools.list_domain_folders()
+def test_list_domain_folders_by_searching_files():
+    list_domain_folders = drive_tools.list_domain_folders_by_searching_files()
     assert isinstance(list_domain_folders, list)
 
     for folder in list_domain_folders:
@@ -42,7 +42,6 @@ def test_list_domain_folders():
 
         folder_name = folder['name']
         assert isinstance(folder_name, str)
-
 
 
 def test_find_folder_by_name():

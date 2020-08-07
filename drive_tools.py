@@ -16,9 +16,10 @@ from apiclient import errors
 # TODO change all none domain to my_
 # TODO search for folders as files and seperate functions for folders as drives
 
-def google_creds():
+
+def google_creds() -> object:
     """
-       This function handles auth and service for google's access to admin sdk directory api.
+       This function handles auth and service for google drive api v3 and minimal sheets api.
 
        Returns:
 
@@ -101,7 +102,7 @@ def list_my_folders_by_searching_files() -> list:
     return my_folders
 
 
-def list_domain_folders() -> list:
+def list_domain_folders_by_searching_files() -> list:
     """
     Creates a list of all the domain shared folders that api Oauth user has access to.
 
@@ -115,13 +116,15 @@ def list_domain_folders() -> list:
 
     while getting_files:
         if not page_token:
-            response = drive_service().files().list(supportsAllDrives=True,
+            response = drive_service().files().list(q="mimeType = 'application/vnd.google-apps.folder'",
+                                                    supportsAllDrives=True,
                                                     includeItemsFromAllDrives=True,
                                                     corpora='allDrives',
                                                     fields="*",
                                                     ).execute()
         else:
-            response = drive_service().files().list(supportsAllDrives=True,
+            response = drive_service().files().list(q="mimeType = 'application/vnd.google-apps.folder'",
+                                                    supportsAllDrives=True,
                                                     includeItemsFromAllDrives=True,
                                                     corpora='allDrives',
                                                     fields="*",
@@ -135,6 +138,7 @@ def list_domain_folders() -> list:
 
         folders = response['files']
         for folder in folders:
+            print(folder['name'])
             domain_folders.append(folder)
 
     return domain_folders
