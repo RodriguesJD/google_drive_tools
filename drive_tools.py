@@ -110,20 +110,24 @@ def list_domain_folders_by_searching_files() -> list:
         list: List of domain shared folders. Each folder returns a dict of data.
 
     """
+    # TODO dump from cache each loop if cache issues persists
+    # TODO trying to silence cach error for this
+    no_cahch_discovery_service = build('drive', 'v3', credentials=google_creds(), cache_discovery=False)
+
     page_token = None
     getting_files = True
     domain_folders = []  # all the domain shared folders i have access to.
 
     while getting_files:
         if not page_token:
-            response = drive_service().files().list(q="mimeType = 'application/vnd.google-apps.folder'",
+            response = no_cahch_discovery_service.files().list(q="mimeType = 'application/vnd.google-apps.folder'",
                                                     supportsAllDrives=True,
                                                     includeItemsFromAllDrives=True,
                                                     corpora='allDrives',
                                                     fields="*",
                                                     ).execute()
         else:
-            response = drive_service().files().list(q="mimeType = 'application/vnd.google-apps.folder'",
+            response = no_cahch_discovery_service.files().list(q="mimeType = 'application/vnd.google-apps.folder'",
                                                     supportsAllDrives=True,
                                                     includeItemsFromAllDrives=True,
                                                     corpora='allDrives',
@@ -138,13 +142,12 @@ def list_domain_folders_by_searching_files() -> list:
 
         folders = response['files']
         for folder in folders:
-            print(folder['name'])
             domain_folders.append(folder)
 
     return domain_folders
 
 
-def find_my_folder_by_name(folder_name: str) -> Union[bool, dict]:
+def find_my_folder_by_name_by_searching_files(folder_name: str) -> Union[bool, dict]:
     """
     Search through all the folders that the Oauth user owns. If the folder_name is found it returns a dict of
     data about the folder.
@@ -184,7 +187,7 @@ def find_my_folder_by_name(folder_name: str) -> Union[bool, dict]:
     return folder_data
 
 
-def find_domain_folder_by_name(folder_name: str) -> Union[bool, dict]:
+def find_domain_folder_by_name_by_searching_files(folder_name: str) -> Union[bool, dict]:
     """
     Search through all the domain folders that the Oauth user has access to. If the folder_name is found it returns a
     dict of data about the folder.

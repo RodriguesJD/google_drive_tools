@@ -35,7 +35,7 @@ def test_list_domain_folders_by_searching_files():
         assert isinstance(folder, dict)
 
         kind = folder['kind']
-        assert kind == 'drive#drive'
+        assert kind == 'drive#file'
 
         folder_id = folder['id']
         assert isinstance(folder_id, str)
@@ -44,9 +44,9 @@ def test_list_domain_folders_by_searching_files():
         assert isinstance(folder_name, str)
 
 
-def test_find_folder_by_name():
+def test_find_my_folder_by_name_by_searching_files():
     file_that_exists = os.environ["G_DRIVE_TEST_FOLDER"]
-    folder = drive_tools.find_my_folder_by_name(file_that_exists)
+    folder = drive_tools.find_my_folder_by_name_by_searching_files(file_that_exists)
     assert isinstance(folder, dict)
 
     kind = folder['kind']
@@ -107,20 +107,20 @@ def test_create_folder_in_drive():
     test_create_folder = "test_create_folder_del_me"
 
     # If test_create_folder exists then delete it before the test.
-    find_test_folder_name = drive_tools.find_my_folder_by_name(test_create_folder)
+    find_test_folder_name = drive_tools.find_my_folder_by_name_by_searching_files(test_create_folder)
     # TODO this logic should live in the delete function itself
     # TODO create a pull request for adding this logic to the delete function
     if find_test_folder_name:
         file_found = True
         while file_found:
-            find_test_folder_name = drive_tools.find_my_folder_by_name(test_create_folder)
+            find_test_folder_name = drive_tools.find_my_folder_by_name_by_searching_files(test_create_folder)
             if find_test_folder_name:
                 drive_tools.delete_file_or_folder(find_test_folder_name['id'])
             else:
                 file_found = False
 
     # Confirm test_create_folder does NOT exist.
-    find_test_folder_name = drive_tools.find_my_folder_by_name(test_create_folder)
+    find_test_folder_name = drive_tools.find_my_folder_by_name_by_searching_files(test_create_folder)
     assert not find_test_folder_name
 
     # Create test_create_folder in g drive.
@@ -128,18 +128,18 @@ def test_create_folder_in_drive():
     assert isinstance(creating_in_root, str)
 
     # Confirm test_create_folder DOES exist.
-    find_test_folder_name = drive_tools.find_my_folder_by_name(test_create_folder)
+    find_test_folder_name = drive_tools.find_my_folder_by_name_by_searching_files(test_create_folder)
     assert find_test_folder_name
 
     # Clean up test env.
-    drive_tools.find_my_folder_by_name(creating_in_root)
+    drive_tools.find_my_folder_by_name_by_searching_files(creating_in_root)
 
     # Confirm test_create_folder was removed.
-    find_test_folder_name = drive_tools.find_my_folder_by_name(test_create_folder)
+    find_test_folder_name = drive_tools.find_my_folder_by_name_by_searching_files(test_create_folder)
     if find_test_folder_name:
         file_found = True
         while file_found:
-            find_test_folder_name = drive_tools.find_my_folder_by_name(test_create_folder)
+            find_test_folder_name = drive_tools.find_my_folder_by_name_by_searching_files(test_create_folder)
             if find_test_folder_name:
                 drive_tools.delete_file_or_folder(find_test_folder_name['id'])
             else:

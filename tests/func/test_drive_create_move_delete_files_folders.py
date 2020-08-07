@@ -15,12 +15,12 @@ def test_drive_create_upload_delete():
     tmp_base_folder = "delete_this_root_folder"
 
     # Confirm folder does not exist, if it does then delete it.
-    find_folder = drive_tools.find_my_folder_by_name(tmp_base_folder)  # Find a folder that the Oauth user has access to.
+    find_folder = drive_tools.find_my_folder_by_name_by_searching_files(tmp_base_folder)  # Find a folder that the Oauth user has access to.
     while find_folder:
         # Delete file
         drive_tools.delete_file_or_folder(find_folder['id'])
         # Try to find file again.
-        re_try_find_folder = drive_tools.find_my_folder_by_name(tmp_base_folder)
+        re_try_find_folder = drive_tools.find_my_folder_by_name_by_searching_files(tmp_base_folder)
         # If the file was deleted then stop the loop and move on
         if not re_try_find_folder:
             find_folder = False
@@ -32,7 +32,7 @@ def test_drive_create_upload_delete():
     assert isinstance(folder_id, str)
 
     # Confirm folder was created.
-    find_folder = drive_tools.find_my_folder_by_name(tmp_base_folder)
+    find_folder = drive_tools.find_my_folder_by_name_by_searching_files(tmp_base_folder)
     assert isinstance(find_folder, dict)
 
     """
@@ -66,7 +66,7 @@ def test_drive_create_upload_delete():
     drive_tools.empty_trash()
 
     # Confirm file was deleted.
-    find_folder = drive_tools.find_my_folder_by_name(tmp_base_folder)  # Find a folder that the Oauth user has access to.
+    find_folder = drive_tools.find_my_folder_by_name_by_searching_files(tmp_base_folder)  # Find a folder that the Oauth user has access to.
     assert not find_folder
 
 
