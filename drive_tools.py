@@ -366,8 +366,8 @@ def get_domain_folder_by_id_by_searching_files(folder_id):
 
 def get_domain_folder_by_id_by_searching_drive(drive_id):
     get_folder = drive_service().drives().get(driveId=drive_id,
-                                             fields='*',
-                                             useDomainAdminAccess=True).execute()
+                                              fields='*',
+                                              useDomainAdminAccess=True).execute()
     return get_folder
 
 
