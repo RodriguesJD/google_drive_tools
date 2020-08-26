@@ -580,7 +580,6 @@ def write_to_existing_sheet(sheet_id, values):
     return result
 
 
-
 class ProjectEnvironment:
     """Create folders and files for project."""
 
