@@ -50,8 +50,10 @@ def test_drive_create_upload_delete():
     
     
     """
-    path_to_upload_csv = "tests/func/test_upload_files"
 
+    path_to_upload_csv = "tests/func/test_upload_files"
+    if not os.path.isdir(path_to_upload_csv):
+        path_to_upload_csv = "google_drive_tools/tests/func/test_upload_files"
     # Upload csv file to folder_id in g drive.
     csv_file_name = "csv_move_to_drive_test.csv"
     upload_file = drive_tools.upload_csv_to_drive(csv_path=path_to_upload_csv,
