@@ -532,3 +532,81 @@ def empty_trash():
     return True
 
 
+class ProjectEnvironment:
+    """Create folders and files for project."""
+
+    def __init__(self,
+                 sheet_title: str,
+                 project_folder_title: Optional[str] = None,
+                 sub_folder_title: Optional[str] = None):
+        """File and/folder names.
+
+        :param sheet_title: Title for the Google sheets document.
+        :type sheet_title: str
+        :param project_folder_title: The name of the base folder for the project.
+        :type project_folder_title: str
+        :param sub_folder_title: The name of the folder that will be places inside the base folder.
+        :type sub_folder_title: str
+        """
+        self.sub_folder_name = sub_folder_title
+        self.sheet_title = sheet_title
+        self.project_folder_name = project_folder_title
+
+    def _project_folder_id(self):
+        """Find folder_id if not create it.
+
+        Search Google using Drive API v3 for a file/folder matching the project_folder_name parameter.
+
+        If the file/folder is NOT found then a file/folder will be created and the id will be returned.
+
+        Else if the file/folder is found then return its id.
+
+        :return folder_id: The Google api identification number for a folder.
+        """
+        find_project_folder = find_my_folder_by_name_by_searching_files(self.project_folder_name)
+        if not find_project_folder:
+            folder_id = create_folder_in_drive(self.project_folder_name)
+
+        else:
+            folder_id = find_my_folder_by_name_by_searching_files(self.project_folder_name)
+            folder_id = folder_id['id']
+
+        return folder_id
+
+    def _get_sub_folder_id(self, base_folder_id):
+        """Find folder_id if not create it.
+
+        Search Google using Drive API v3 for a file/folder matching the sub_folder_name parameter.
+
+        If the file/folder is NOT found then a file/folder will be created and the id will be returned.
+
+        Else if the file/folder is found then return its id.
+
+        :param base_folder_id: Name of file/folder.
+        :type base_folder_id: str
+        :return: folder_id: The Google api identification number for a folder.
+        """
+        find_sub_folder = find_my_folder_by_name_by_searching_files(self.sub_folder_name)
+        if not find_sub_folder:
+            folder_id = create_folder_in_drive(self.sub_folder_name, base_folder_id)
+        else:
+            folder_id = find_my_folder_by_name_by_searching_files(self.sub_folder_name)['id']
+
+        return folder_id
+
+    def build(self):
+        """Create the folder structure for project then create a Google sheets file.
+
+        :return: folder_id: The Google api identification number for a folder.
+        """
+        if self.project_folder_name:
+            folder_id = self._project_folder_id()
+            if self.sub_folder_name:
+                folder_id = self._get_sub_folder_id(folder_id)
+
+        if folder_id:
+            file_id = create_file_in_drive(self.sheet_title, folder_id)
+        else:
+            file_id = create_file_in_drive(self.sheet_title)
+
+        return file_id
