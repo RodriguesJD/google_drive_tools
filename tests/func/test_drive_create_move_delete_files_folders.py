@@ -1,6 +1,9 @@
 from pathlib import Path
 import os
-import drive_tools
+try:
+    import drive_tools
+except ModuleNotFoundError:
+    from google_drive_tools import drive_tools
 
 
 def test_drive_create_upload_delete():
