@@ -66,6 +66,19 @@ def drive_service() -> object:
     return g_drive_service
 
 
+def sheets_service() -> object:
+    """
+    This function negotiates access to Google Sheets.
+
+    Returns:
+        object: Google Sheets API service instance.
+
+    """
+    g_sheets_service = build('sheets', 'v4', credentials=google_creds())
+
+    return g_sheets_service
+
+
 def no_cache_discovery_service():
     service = build('drive', 'v3', credentials=google_creds(), cache_discovery=False)
     return service
@@ -530,6 +543,42 @@ def empty_trash():
     drive_service().files().emptyTrash().execute()
 
     return True
+
+
+def create_sheets(title, values):
+    spreadsheet = {
+        'properties': {
+            'title': title
+        }
+    }
+
+    spreadsheet = sheets_service().spreadsheets().create(body=spreadsheet,
+                                                         fields='spreadsheetId').execute()
+
+    spreadsheet_id = spreadsheet.get('spreadsheetId')
+
+    body = {
+        'values': values
+    }
+    result = sheets_service().spreadsheets().values().update(spreadsheetId=spreadsheet_id,
+                                                             range="A1",
+                                                             valueInputOption="USER_ENTERED",
+                                                             body=body).execute()
+
+    return spreadsheet_id
+
+
+def write_to_existing_sheet(sheet_id, values):
+    body = {
+        'values': values
+    }
+    result = sheets_service().spreadsheets().values().update(spreadsheetId=sheet_id,
+                                                             range="A1",
+                                                             valueInputOption="USER_ENTERED",
+                                                             body=body).execute()
+
+    return result
+
 
 
 class ProjectEnvironment:
